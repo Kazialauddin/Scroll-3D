@@ -3,73 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSAP ScrollTrigger Image Zoom</title>
+  <title>Modern 3D Scroll Zoom & Scrollytelling Demo</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0f0f0f;
-      color: #ffffff;
+
+    /* Lenis Smooth Scroll Required CSS */
+    html.lenis, html.lenis body {
+      height: auto;
     }
-    /* স্পেসার সেকশন */
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0b0b0b;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
     .spacer {
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
+      font-size: 2rem;
+      background: #111;
+      border-bottom: 1px solid #222;
     }
-    /* ইমেজ কনটেইনার */
-    .zoom-container {
+
+    /* ৩ডি পার্স্পেক্টিভ এবং মেইন সেকশন */
+    .zoom-section {
+      position: relative;
       width: 100%;
       height: 100vh;
       overflow: hidden;
-      position: relative;
+      perspective: 1000px; /* থ্রিডি গভীরতা তৈরির জন্য */
+      background: #000;
     }
-    .zoom-image {
+
+    .zoom-container {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       will-change: transform;
+    }
+
+    .zoom-image {
+      width: 50vw;
+      height: 60vh;
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+      will-change: transform;
+    }
+
+    /* ওপরের টেক্সট লেয়ার */
+    .content-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+      width: 80%;
+    }
+
+    .content-overlay h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 15px;
+      background: linear-gradient(to right, #ffffff, #777777);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .content-overlay p {
+      font-size: 1.3rem;
+      color: #aaa;
+    }
+
+    .footer-section {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: #111;
     }
   </style>
 </head>
 <body>
 
   <div class="spacer">
-    <p>নিচে স্ক্রল করুন 👇</p>
+    <p>নিচে স্ক্রল করুন (Silk Smooth Scroll) 👇</p>
   </div>
 
-  <div class="zoom-container">
-    <img class="zoom-image" src="https://picsum.photos/1920/1080" alt="Zoom Sample">
-  </div>
+  <!-- আধুনিক ৩ডি জুম সেকশন -->
+  <section class="zoom-section">
+    <div class="content-overlay">
+      <h1>ভবিষ্যতের অভিজ্ঞতা</h1>
+      <p>স্ক্রল করার সাথে সাথে ছবির ভেতরে প্রবেশ করুন</p>
+    </div>
+    <div class="zoom-container">
+      <!-- যেকোনো হাই রেজুলেশন ছবি -->
+      <img class="zoom-image" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop" alt="Modern Zoom">
+    </div>
+  </section>
 
-  <div class="spacer">
+  <div class="footer-section">
     <p>অ্যানিমেশন শেষ 🎉</p>
   </div>
 
+  <!-- GSAP, ScrollTrigger & Lenis CDN Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.8/dist/lenis.min.js"></script>
 
   <script>
-    // ScrollTrigger প্লাগইন অ্যাক্টিভেট করা
+    // ১. Lenis স্মুথ স্ক্রল ইনিশিয়ালাইজেশন
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
+    });
+
+    // Lenis ও GSAP ScrollTrigger সিঙ্ক করা
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // ২. GSAP প্লাগইন রেজিস্টার
     gsap.registerPlugin(ScrollTrigger);
 
-    // Zoom-in Animation
-    gsap.to(".zoom-image", {
-      scale: 2.5, // ছবিটি ২.৫ গুণ বড় বা জুম হবে
-      ease: "none",
+    // ৩. পিন ও টাইমলাইন অ্যানিমেশন তৈরি
+    const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: ".zoom-container", // কোন ইলিমেন্টটি স্ক্রলে আসার পর কাজ করবে
-        start: "top bottom",       // যখন কনটেইনারের ওপরের অংশ স্ক্রিনের নিচে পৌঁছাবে
-        end: "bottom top",         // যখন কনটেইনারের নিচের অংশ স্ক্রিনের ওপরে চলে যাবে
-        scrub: 1                   // স্ক্রল মাউসের সাথে মসৃণভাবে (smooth offset: 1 sec) সিঙ্ক থাকবে
+        trigger: ".zoom-section",
+        start: "top top",
+        end: "+=2500", // কতদূর স্ক্রল করলে অ্যানিমেশন শেষ হবে
+        pin: true,     // স্ক্রল করার সময় সেকশনটি আটকে রাখবে
+        scrub: 1.5,    // মাখনের মতো মসৃণভাবে মাউসের সাথে রিভার্স ও ফরোয়ার্ড হবে
+        anticipatePin: 1
       }
     });
+
+    // ছবির থ্রিডি জুম এবং ডেপথ ইফেক্ট
+    tl.to(".zoom-image", {
+      scale: 5,          , // ছবি ৫ গুণ বড় হবে
+      z: 400,            // ৩ডি স্পেসের সামনে এগিয়ে আসবে
+      rotateX: 3,        // হালকা থ্রিডি টিল্ট
+      ease: "power1.inOut"
+    }, 0)
+
+    // টেক্সট ওভারলে ফেড আউট এবং বড় হওয়া
+    .to(".content-overlay", {
+      scale: 1.3,
+      opacity: 0,
+      ease: "power1.in"
+    }, 0);
   </script>
 </body>
 </html>
