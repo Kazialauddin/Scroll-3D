@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP ScrollTrigger Image Zoom</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0f0f0f;
+      color: #ffffff;
+    }
+    /* স্পেসার সেকশন */
+    .spacer {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+    /* ইমেজ কনটেইনার */
+    .zoom-container {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    .zoom-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      will-change: transform;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="spacer">
+    <p>নিচে স্ক্রল করুন 👇</p>
+  </div>
+
+  <div class="zoom-container">
+    <img class="zoom-image" src="https://picsum.photos/1920/1080" alt="Zoom Sample">
+  </div>
+
+  <div class="spacer">
+    <p>অ্যানিমেশন শেষ 🎉</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    // ScrollTrigger প্লাগইন অ্যাক্টিভেট করা
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Zoom-in Animation
+    gsap.to(".zoom-image", {
+      scale: 2.5, // ছবিটি ২.৫ গুণ বড় বা জুম হবে
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".zoom-container", // কোন ইলিমেন্টটি স্ক্রলে আসার পর কাজ করবে
+        start: "top bottom",       // যখন কনটেইনারের ওপরের অংশ স্ক্রিনের নিচে পৌঁছাবে
+        end: "bottom top",         // যখন কনটেইনারের নিচের অংশ স্ক্রিনের ওপরে চলে যাবে
+        scrub: 1                   // স্ক্রল মাউসের সাথে মসৃণভাবে (smooth offset: 1 sec) সিঙ্ক থাকবে
+      }
+    });
+  </script>
+</body>
+</html>
